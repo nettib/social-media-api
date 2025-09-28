@@ -1,0 +1,31 @@
+{
+  "name": "social_media_api",
+  "version": "1.0.0",
+  "description": "A social media API for creating posts, comments, likes, and user authentication",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "Netsanet Tibebu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nettib/social-media-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nettib/social-media-api/issues"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
