@@ -2,6 +2,7 @@ import User from "../model/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js";
+import mongoose from "mongoose";
 
 
 const sanitizeUser = (user) => {
@@ -11,16 +12,21 @@ const sanitizeUser = (user) => {
 } 
 
 export const signUp = async (req, res, next) => {
+    
     try {
         const { name, username, email, password, bio } = req.body;
 
         if (!name || !username || !email || !password) {
-            return res.status(400).json({ success: false, error: "Please fill required essentials"});
+            const error = new Error("Please fill required essentials");
+            error.status = 400;
+            throw error;
         }
 
         const existingUser = await User.findOne({ $or: [{ username }, { email }]});
         if (existingUser) {
-            return res.status(409).json({ success: false, error: "Username or email already exists" });
+            const error = new Error("Username or email already exists");
+            error.status = 409;
+            throw error;
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -40,24 +46,30 @@ export const signIn = async (req, res, next) => {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            return res.status(400).json({ success: false, error: "Please fill all credentials"});
+            const error = new Error("Please fill all credentials");
+            error.status = 400;
+            throw error;
         }
 
         const user = await User.findOne({ username });
 
         if (!user) {
-            return res.status(404).json({ success: false, error: "User not found"});
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
         }
 
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (!isValidPassword) {
-            return res.status(401).json({ success: false, error: "Invalid password"});
+            const error = new Error("Invalid password");
+            error.status = 401;
+            throw error;
         }
 
         const token = jwt.sign({ userId: user._id}, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
-        res.status(200).json({ success: true, message: "Signed in successfully", data: sanitizeUser(user), token});
+        res.status(200).json({ success: true, message: "Signed in successfully", token, data: sanitizeUser(user) });
     } catch(error) {
         next(error);
     }
