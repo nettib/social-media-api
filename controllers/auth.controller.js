@@ -2,7 +2,6 @@ import User from "../model/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js";
-import mongoose from "mongoose";
 
 
 const sanitizeUser = (user) => {
@@ -12,7 +11,7 @@ const sanitizeUser = (user) => {
 } 
 
 export const signUp = async (req, res, next) => {
-    
+
     try {
         const { name, username, email, password, bio } = req.body;
 
