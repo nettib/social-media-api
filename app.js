@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import connectToDB from "./database/mongodb.js";
 import authRouter from "./routes/auth.routes.js";
 import postRouter from "./routes/post.routes.js";
+import userRouter from "./routes/user.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -15,7 +16,8 @@ app.use(cookieParser());
 
 //Routes
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/post", postRouter);
+app.use("/api/v1/posts", postRouter);
+app.use("/api/v1/users", userRouter);
 
 // Error handler
 
