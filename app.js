@@ -20,7 +20,6 @@ app.use("/api/v1/posts", postRouter);
 app.use("/api/v1/users", userRouter);
 
 // Error handler
-
 app.use(errorHandler);
 
 app.get("/", (req, res) => {
