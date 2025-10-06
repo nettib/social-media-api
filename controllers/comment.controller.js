@@ -1,4 +1,43 @@
-import { commentPostService, updateCommentService, uncommentPostService } from "../services/comment.service.js";
+import { commentPostService, updateCommentService, uncommentPostService, getCommentsService, getCommentService } from "../services/comment.service.js";
+
+
+export const getComments = async (req, res, next) => {
+    try {
+        const postId = req.params.postId;
+        if(!postId) {
+            const error = new Error("Bad request");
+            error.status = 400;
+            throw error;
+        }
+
+        const comments = await getCommentsService(postId);
+
+
+        res.status(200).json({ success: true, data: comments });
+    } catch(error) {
+        next(error);
+    }
+}
+
+export const getComment = async (req, res, next) => {
+    try {
+        // const postId = req.params.postId;
+        const commentId = req.params.commentId;
+        if(!commentId) {
+            const error = new Error("Bad request");
+            error.status = 400;
+            throw error;
+        }
+
+        const comment = await getCommentService(commentId);
+
+        res.status(200).json({ success: true, data: comment });
+        
+    } catch(error) {
+        next(error);
+    }
+}
+
 
 
 export const commentPost = async (req, res, next) => {

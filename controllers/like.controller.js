@@ -1,4 +1,4 @@
-import { likePostService, unlikePostService } from "../services/like.service.js";
+import { getLikesService, likePostService, unlikePostService } from "../services/like.service.js";
 
 
 export const likePost = async (req, res, next) => {
@@ -37,6 +37,24 @@ export const unlikePost = async (req, res, next) => {
         console.log(post);
 
         res.status(200).json({ success: true, message: "You unliked the post" });
+    } catch(error) {
+        next(error);
+    }
+}
+
+export const getLikes = async (req, res, next) => {
+    try {
+        const postId = req.params.postId;
+
+        if (!postId) {
+            const error = new Error("Bad request");
+            error.status = 400;
+            throw error;
+        }
+
+        const likes = await getLikesService(postId);
+
+        res.status(200).json({ success: true, likes: likes.length, data: likes });
     } catch(error) {
         next(error);
     }

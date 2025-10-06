@@ -33,3 +33,19 @@ export const unlikePostService = async (postId, userId) => {
     }
 }
 
+export const getLikesService = async (postId) => {
+    try {
+        const post = await Post.findById(postId).populate("likes", "_id name username");
+
+        if (!post) {
+            const error = new Error("Post not found");
+            error.status = 404;
+            throw error;
+        }
+
+        return post.likes;
+    } catch(error) {
+        throw error;
+    }
+} 
+
