@@ -16,9 +16,17 @@ const postSchema = new mongoose.Schema({
         type: [ { type: mongoose.Schema.Types.ObjectId, ref: "User" } ],
         default: []
     },
+    likesCount: {
+        type: Number,
+        default: 0
+    },
     comments: {
         type: [ { type: mongoose.Schema.Types.ObjectId, ref: "Comment" }  ],
         default: []
+    },
+    commentsCount: {
+        type: Number,
+        default: 0
     },
     views: {
         type: Number,
@@ -27,6 +35,12 @@ const postSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 postSchema.index({ author: 1 });
+
+postSchema.pre("save", function(next) {
+    this.likesCount = this.likes.length
+    this.commentsCount = this.comments.length
+    next();
+});
 
 const Post = mongoose.model("Post", postSchema);
 

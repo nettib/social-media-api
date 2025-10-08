@@ -45,16 +45,17 @@ export const unlikePost = async (req, res, next) => {
 export const getLikes = async (req, res, next) => {
     try {
         const postId = req.params.postId;
+        let { page = 1, limit = 10 } = req.query;
 
         if (!postId) {
             const error = new Error("Bad request");
             error.status = 400;
             throw error;
         }
+        
+        const { totalLikes, totalPages, data } = await getLikesService(postId, page, limit);
 
-        const likes = await getLikesService(postId);
-
-        res.status(200).json({ success: true, likes: likes.length, data: likes });
+        res.status(200).json({ success: true, page, totalPages, likes: totalLikes, data });
     } catch(error) {
         next(error);
     }

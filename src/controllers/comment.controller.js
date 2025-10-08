@@ -4,16 +4,19 @@ import { commentPostService, updateCommentService, uncommentPostService, getComm
 export const getComments = async (req, res, next) => {
     try {
         const postId = req.params.postId;
+        let { page = 1, limit = 4, sort = "latest" } = req.query;
         if(!postId) {
             const error = new Error("Bad request");
             error.status = 400;
             throw error;
         }
 
-        const comments = await getCommentsService(postId);
+        page = Number(page);
+        limit = Number(limit);
+        const { totalComments, totalPages, comments} = await getCommentsService(postId, page, limit, sort);
 
 
-        res.status(200).json({ success: true, data: comments });
+        res.status(200).json({ success: true, page, totalPages, comments: totalComments, likes: comments.likesCount, data: comments });
     } catch(error) {
         next(error);
     }

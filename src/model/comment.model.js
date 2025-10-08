@@ -20,9 +20,17 @@ const commentSchema = new mongoose.Schema({
     likes: { 
         type: [ { type: mongoose.Schema.Types.ObjectId, ref: "User" } ],
         default: []
-     }
+    },
+    likesCount: {
+        type: Number,
+        default: 0
+    }
 }, { timestamps: true });
 
+commentSchema.pre("save", function(next) {
+    this.likesCount = this.likes.length;
+    next();
+});
 
 const Comment = mongoose.model("Comment", commentSchema);
 

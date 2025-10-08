@@ -1,10 +1,19 @@
 import { getAllPostsService, getPostById, createPostService,updatePostService, deletePostService } from "../services/post.service.js";
 
+
 export const getAllPosts = async (req, res, next) => {
     try {
-        const posts = await getAllPostsService();
+        let { page = 1, limit = 4, user, search, sort = "latest" } = req.query;
+        page = Number(page);
+        limit = Number(limit);
 
-        res.status(200).json({ success: true, posts });
+        let filter = {};
+
+        if(search) filter.content = { $regex: search, $options: "i" };
+
+        const { totalPosts, totalPages, data } = await getAllPostsService(page, limit, user, sort, filter);
+
+        res.status(200).json({ success: true, totalPosts, page, totalPages, posts: data });
     } catch(error) {
         console.log(error);
         next(error);

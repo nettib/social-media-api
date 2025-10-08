@@ -2,8 +2,6 @@ import Comment from "../model/comment.model.js";
 import Post from "../model/post.model.js";
 
 
-
-
 export const getCommentById = async (id) => {
     try {
         const comment = await Comment.findById(id);
@@ -31,7 +29,7 @@ export const getCommentService = async(commentId) => {
                                     },
                                     {
                                         path: "likes",
-                                    select: "_id name username"
+                                        select: "_id name username"
                                     }
                                 ]);
         if (!comment) {
@@ -44,34 +42,39 @@ export const getCommentService = async(commentId) => {
         throw error;
     }
 }
-export const getCommentsService = async(postId) => {
+export const getCommentsService = async(postId, page, limit, sort) => {
     try {
-        const post = await Post.findById(postId)
-                         .populate({
-                            path: "comments", 
-                            select: "_id content",
-                            populate: [
-                                {
-                                    path: "author",
-                                    select: "_id name username"
-                                },
-                                { 
-                                    path: "likes",
-                                    select: "_id name username"
-                                }
-                            ]
-                         });
+        let sortOption = {};
+        if (sort === "latest") sortOption = { createdAt: -1 }
+        else if(sort === "oldest") sortOption = { createdAt: 1}
+        else if (sort === "popular") sortOption = { likesCount: -1}
+        const totalComments = await Comment.countDocuments({ postId });
+        const comments = await Comment.find({ postId })
+                        .populate([
+                            {   
+                                path: "author",
+                                select: "_id name username"
+                            },
+                            {
+                                path: "likes",
+                            select: "_id name username"
+                            }
+                        ])
+                        .skip((page - 1) * limit)
+                        .limit(limit)
+                        .sort(sortOption);
 
-        if (!post) {
+        if (!comments) {
             const error = new Error("Post not found");
             error.status = 404;
             throw error;
         }
-        return post.comments 
+        return { totalComments, totalPages: Math.ceil(totalComments / limit), comments } 
     } catch(error) {
         throw error;
     }
 }
+
 
 export const commentPostService = async (postId, author, content) => {
     try {

@@ -24,5 +24,3 @@ postRouter.delete("/:postId", authorize, checkPostOwnership, deletePost);
 postRouter.use("/:postId/like", likeRouter); 
 postRouter.use("/:postId/comment", commentRouter); 
 export default postRouter;
-
-

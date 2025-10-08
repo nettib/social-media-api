@@ -1,11 +1,34 @@
 import Post from "../model/post.model.js";
+import User from "../model/user.model.js";
 
-
-export const getAllPostsService = async () => {
+export const getAllPostsService = async (page, limit, name, sort, filter) => {
     try {
-        const posts = await Post.find();
+        if (name) {
+            const user = await User.findOne({ name: name });
+            if (user) {
+                filter.author = user._id;
+            } else {
+                const error = new Error("User not found");
+                error.status = 404;
+                throw error;
+            }
+        }
 
-        return posts;
+        const totalPosts = await Post.countDocuments(filter);
+
+        let sortOption = {}
+        if(sort === "latest") sortOption = { createdAt: -1 }
+        else if(sort === "oldest") sortOption = { createdAt: 1 }
+        else if(sort === "popular") sortOption = { likesCount: -1 }
+
+
+        const posts = await Post.find(filter)
+                                .populate("author", "_id name username")
+                                .skip((page - 1) * limit)
+                                .limit(limit)
+                                .sort(sortOption);
+        
+        return { totalPosts, totalPages: Math.ceil(totalPosts / limit), data: posts };
     } catch(error) {
         throw error;
     }

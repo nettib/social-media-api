@@ -10,6 +10,7 @@ const sanitizeUser = (user) => {
     return userInfo;
 } 
 
+
 export const signUp = async (req, res, next) => {
 
     try {
