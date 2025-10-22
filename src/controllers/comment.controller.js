@@ -1,4 +1,4 @@
-import { commentPostService, updateCommentService, uncommentPostService, getCommentsService, getCommentService } from "../services/comment.service.js";
+import { commentPostService, updateCommentService, uncommentPostService, getCommentsService, getCommentService, likeCommentService } from "../services/comment.service.js";
 
 
 export const getComments = async (req, res, next) => {
@@ -101,6 +101,23 @@ export const uncomment = async (req, res, next) => {
 
         res.status(200).json({ success: true, message });
         
+    } catch(error) {
+        next(error);
+    }
+}
+
+export const likeComment = async (req, res, next) => {
+    try {
+        const commentId = req.params.commentId;
+        if(!commentId) {
+            const error = new Error("Bad request");
+            error.status = 400
+            throw error;
+        }
+
+        const comment = await likeCommentService(commentId, req.user);
+
+        res.status(200).json({ success: true, comment });
     } catch(error) {
         next(error);
     }

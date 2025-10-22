@@ -131,3 +131,25 @@ export const uncommentPostService = async (postId, commentId, comment) => {
     }
 }
 
+export const likeCommentService = async (commentId, user) => {
+    try {
+        const comment = await Comment.findById(commentId);
+
+        if (!comment.likes.includes(user.id)) {
+            comment.likes.push(user.id);
+            comment.likesCount += 1;
+            await comment.save();
+        }
+
+        if(!comment) {
+            const error = new Error("Comment not found");
+            error.status = 404;
+            throw error;
+        }
+
+        return comment;
+    } catch(error) {
+        next(error);
+    }
+}
+
