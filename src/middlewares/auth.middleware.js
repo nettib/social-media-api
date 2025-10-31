@@ -3,7 +3,7 @@ import { JWT_SECRET } from "../config/env.js";
 import User from "../model/user.model.js";
 
 
-export const authorize = async (req, res, next) => {
+export const authenticate = async (req, res, next) => {
     try { 
         let token;
 
@@ -13,14 +13,14 @@ export const authorize = async (req, res, next) => {
 
         if (!token) {
             console.log("No token");
-            return res.status(401).json({ success: false, error: "Unauthorized" });
+            return res.status(401).json({ success: false, error: "Unauthenticated" });
         }
 
         const decoded = jwt.verify(token, JWT_SECRET);
 
         if (!decoded) {
             console.log("No decoded");
-            return res.status(401).json({ success: false, error: "Unauthorized" });
+            return res.status(401).json({ success: false, error: "Unauthenticated" });
         }
 
         const { userId } = decoded;
@@ -34,5 +34,26 @@ export const authorize = async (req, res, next) => {
     }catch(error) {
         console.log(error.message);
         res.status(500).json({ success: false, error: "Internal server error" });
+    }
+}
+
+//make this like next(error)
+export const authorize = async (req, res, next) => {
+    try {
+        if (!req.user) {
+            const error = new Error("Bad request");
+            error.status = 401;
+            throw error;
+        }
+
+        if (req.user.role !== "admin") {
+            const error = new Error("Forbidden: you are not authorized to do this action");
+            error.status = 403;
+            throw error;
+        }
+        
+        next();
+    } catch(error) {
+        next(error);
     }
 }

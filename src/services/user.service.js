@@ -1,8 +1,29 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 import Post from "../model/post.model.js";
 import User from "../model/user.model.js";
 import { ensureNotSelfAction } from "../utils/validation.js";
 
+
+export const getAllUsersService = async () => {
+    try {
+        const users = await User.find().select('-password');
+
+        return users;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const getUserService = async (id) => {
+    try {
+        const user = await User.findById(id).select('-password');
+
+        return user
+    } catch(error) {
+        throw error;
+    }
+}
 export const getMyPostsService = async (id) => {
     try {
         const posts = await Post.find({ author: id });
@@ -125,3 +146,52 @@ export const getFollowingSevice = async (userId) => {
         throw error;
     }
 }
+
+export const updateProfileService = async (userId, requester, { name, username, email, password, bio, role }) => {
+    try {
+        const user = await User.findById(userId);
+
+        if(!user) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        if(name) user.name = name;
+        if(username) user.username = username;
+        if(email) user.email = email;
+        if(bio) user.bio = bio;
+
+        if(role && requester.role === "admin") {
+            user.role = role;
+        }
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            user.password = hashedPassword;
+        }
+
+        await user.save();
+
+        return user;
+
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const deleteUserService = async (userId) => {
+    try {
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            const error = new Error("User not found");
+            error.status = 404;
+            throw error;
+        }
+
+        return { msg: "Deleted the user successfully" };
+    } catch(error) {
+        throw error;
+    }
+} 

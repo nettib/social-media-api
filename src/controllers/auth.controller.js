@@ -14,7 +14,7 @@ const sanitizeUser = (user) => {
 export const signUp = async (req, res, next) => {
 
     try {
-        const { name, username, email, password, bio } = req.body;
+        const { name, username, email, password, bio, role } = req.body;
 
         if (!name || !username || !email || !password) {
             const error = new Error("Please fill required essentials");
@@ -30,7 +30,7 @@ export const signUp = async (req, res, next) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ name, username, email, password: hashedPassword, bio });
+        const user = new User({ name, username, email, password: hashedPassword, bio, role });
         await user.save();
 
         res.status(201).json({ success: true, message: "Signed up successfully", data: sanitizeUser(user) });

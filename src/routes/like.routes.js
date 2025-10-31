@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authorize } from "../middlewares/auth.middleware.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
 import { getLikes, likePost, unlikePost } from "../controllers/like.controller.js";
 
 const likeRouter = Router({ mergeParams: true });
 
-// can be irrelavant to authorize the user here
+// can be irrelavant to authenticate the user here
 likeRouter.get("/", getLikes);
-likeRouter.post("/", authorize, likePost);
-likeRouter.delete("/", authorize, unlikePost);
+likeRouter.post("/", authenticate, likePost);
+likeRouter.delete("/", authenticate, unlikePost);
 
 export default likeRouter;

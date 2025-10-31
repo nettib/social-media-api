@@ -13,7 +13,7 @@ export const checkPostOwnership = async (req, res, next) => {
         const post = await getPostById(postId);
         
         if (post.author.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ success: false, error: "You are not authorized to perform this action"});
+            return res.status(403).json({ success: false, error: "You are not authenticated to perform this action"});
         }
 
         req.post = post;
