@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
 
+const fileSchema = new mongoose.Schema({
+    fileName: { type: String, required: true, trim: true },
+    originalName: { type: String, required: true, trim: true },
+    url: { type: String, required: true },
+    size: { type: Number, required: true },
+    fileType: { type: String, required: true },
+    uploadedAt: { type: Date, default: Date.now() }
+})
+
+
 const postSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -8,10 +18,17 @@ const postSchema = new mongoose.Schema({
     },
     content: {
         type: String,
-        required: [true, "Please provide post content"],
         trim: true,
-        minLength: 1
+        validate: {
+            validator: function(value) {
+                return ((value && value.trim().length > 0) || (this.files && this.files.length > 0))
+            }
+        }
     },
+    files: {
+        type: [ { type: fileSchema } ],
+        default: []
+    }, 
     likes: {
         type: [ { type: mongoose.Schema.Types.ObjectId, ref: "User" } ],
         default: []

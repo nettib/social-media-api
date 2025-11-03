@@ -43,13 +43,21 @@ export const getSpecificpost = async (req, res, next) => {
 export const createPost = async (req, res, next) => {
     try {
         const { content } = req.body;
-        if (!content) {
-            const error = new Error("No post content");
+        if (!content && (!req.files || req.files.length == 0)) {
+            const error = new Error("No post content and files to be posted");
             error.status = 400;
             throw error;
         }
 
-        const post = await createPostService(req.user._id, content);
+        const files = (req.files || []).map(file => ({
+            fileName: file.filename,
+            originalName: file.originalname,
+            url: file.url,
+            size: file.size,
+            fileType: file.mimetype
+        }));
+
+        const post = await createPostService(req.user._id, content, files);
         res.status(201).json({ success: true, post });
     } catch(error) {
         next(error);
@@ -60,14 +68,24 @@ export const createPost = async (req, res, next) => {
 
 export const updatePost = async (req, res, next) => {
     try { 
-        const { content } = req.body;
-        if (!content) {
-            const error = new Error("No post content");
+        console.log(req.files);
+        const { content, removeFiles=[] } = req.body;
+        console.log(removeFiles);
+        if (!content && (!req.files || req.files.length == 0) && removeFiles.length == 0 ) {
+            const error = new Error("No post content and files to be posted or deleted");
             error.status = 400;
             throw error;
         }
+        
+        const newFiles = (req.files || []).map(file => ({
+            fileName: file.filename,
+            originalName: file.originalname,
+            url: file.url,
+            size: file.size,
+            fileType: file.mimetype
+        }));
 
-        const updatedPost = await updatePostService(req.post, content);
+        const updatedPost = await updatePostService(req.post, content, newFiles, removeFiles);
 
         res.status(200).json({ success: true, post: updatedPost });
     } catch(error) {

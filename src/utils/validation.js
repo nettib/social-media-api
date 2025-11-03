@@ -1,5 +1,4 @@
 
-
 export const ensureNotSelfAction = (currentId, targetId) => {
     if(currentId.toString() === targetId.toString()) {
         const error = new Error("You can't perform this action on yourself");
@@ -7,3 +6,4 @@ export const ensureNotSelfAction = (currentId, targetId) => {
         throw error;
     }
 }
+
