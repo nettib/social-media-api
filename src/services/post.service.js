@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import Post from "../model/post.model.js";
 import User from "../model/user.model.js";
 
@@ -46,9 +48,10 @@ export const getPostById = async (id) => {
 
 }
 
-export const createPostService = async (id, content) => {
+export const createPostService = async (author, content, files) => {
     try {
-        const post = new Post({ author: id, content });
+        const post = new Post({ author, content, files });
+        console.log(post);
         await post.save();
 
         return post;
@@ -57,10 +60,23 @@ export const createPostService = async (id, content) => {
     }
 }
 
-export const updatePostService = async (post, content) => {
+export const updatePostService = async (post, content, newFiles, removeFiles) => {
     try {
-        post.content = content;
+        if (content) post.content = content;
 
+        if (removeFiles.length > 0) {
+            post.files = post.files.filter(file => {
+                const shouldRemove = removeFiles.includes(file.url);
+                const filePath = path.join(process.cwd(), file.url);
+                if (shouldRemove && fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+                return !shouldRemove
+            })
+        }
+
+        if (newFiles) post.files.push(...newFiles);
+ 
         const updatedPost = await post.save();
 
         return updatedPost;
@@ -71,6 +87,20 @@ export const updatePostService = async (post, content) => {
 
 export const deletePostService = async (post) => {
     try {
+        for (const file of post.files) {
+            try {
+                const filePath = path.join(process.cwd(), file.url);
+                if(fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            } catch(error) {
+                console.log(`Error deleting file:`, file.url, error.message);
+                const err = new Error("Internal server Error");
+                err.status = 500;
+                throw err;
+            }
+        };
+
         await post.deleteOne();
 
         return { msg: "Deleted the post successfully" };
