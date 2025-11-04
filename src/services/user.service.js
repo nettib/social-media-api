@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path"; 
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import Post from "../model/post.model.js";
@@ -147,7 +149,7 @@ export const getFollowingSevice = async (userId) => {
     }
 }
 
-export const updateProfileService = async (userId, requester, { name, username, email, password, bio, role }) => {
+export const updateProfileService = async (userId, requester, { name, username, email, password, bio, role, profileFile, removeProfilePicture }) => {
     try {
         const user = await User.findById(userId);
 
@@ -171,6 +173,26 @@ export const updateProfileService = async (userId, requester, { name, username, 
             user.password = hashedPassword;
         }
 
+        if ((removeProfilePicture || profileFile) && user.profilePicture && user.profilePicture.url) {
+            const oldFilePath = path.join(process.cwd(), user.profilePicture.url);
+            if (fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
+            }
+        }
+
+
+        if (removeProfilePicture) {
+            user.profilePicture = null;
+        } else if (profileFile) {
+            user.profilePicture = {
+                ImageName: profileFile.filename,
+                originalName: profileFile.originalname, 
+                url: profileFile.url,
+                size: profileFile.size,
+                ImageType: profileFile.mimetype
+            }
+        }
+
         await user.save();
 
         return user;
@@ -182,13 +204,22 @@ export const updateProfileService = async (userId, requester, { name, username, 
 
 export const deleteUserService = async (userId) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(userId);
+        const user = await User.findById(userId);
 
-        if (!deletedUser) {
+         if (!user) {
             const error = new Error("User not found");
             error.status = 404;
             throw error;
         }
+
+        if (user.profilePicture && user.profilePicture.url) {
+            const oldFilePath = path.join(process.cwd(), user.profilePicture.url);
+            if (fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
+            }
+        }
+
+        await user.deleteOne();
 
         return { msg: "Deleted the user successfully" };
     } catch(error) {

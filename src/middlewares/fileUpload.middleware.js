@@ -65,6 +65,10 @@ export const upload = multer({
 
 export const fileUrl = (req, res, next) => {
     try {
+        if (req.file && !req.files) {
+            req.files = [req.file];
+        }
+
         if (!req.files || req.files.length === 0) {
             return next();
         }

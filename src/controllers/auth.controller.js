@@ -30,7 +30,19 @@ export const signUp = async (req, res, next) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ name, username, email, password: hashedPassword, bio, role });
+
+        let profilePicture = null;
+        if (req.file) {
+            profilePicture = {
+                ImageName: req.file.filename,
+                originalName: req.file.originalname,
+                url: req.file.url,
+                size: req.file.size,
+                ImageType: req.file.mimetype
+            };
+        }
+
+        const user = new User({ name, username, email, password: hashedPassword, role, profilePicture, bio });
         await user.save();
 
         res.status(201).json({ success: true, message: "Signed up successfully", data: sanitizeUser(user) });

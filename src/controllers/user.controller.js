@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { getAllUsersService ,getMyPostsService, followUserService, getFollowersSevice, getFollowingSevice, getUserService, updateProfileService, deleteUserService } from "../services/user.service.js";
 
 export const getAllUsers = async (req, res, next) => {
@@ -117,7 +119,7 @@ export const getFollowing = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
     try {
-        const { name, username, email, password, bio, role } = req.body;
+        const { name, username, email, password, bio, role, removeProfilePicture=false } = req.body;
         const userId = req.params.userId;
         if(!userId) {
             const error = new Error("Bad request");
@@ -125,8 +127,22 @@ export const updateProfile = async (req, res, next) => {
             throw error;
         }
 
+        let profileFile = null;
+        if (req.file) {
+            profileFile = req.file
+        }
+
+        if (removeProfilePicture && profileFile) {
+            const oldFilePath = path.join(process.cwd(), profileFile.url);
+            if (fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
+            }
+            const error = new Error("Conflict: can not remove and upload a profile picture at the same time");
+            error.status = 409;
+            throw error;
+        }
         
-        const user = await updateProfileService(userId, req.user, { name, username, email, password, bio, role });
+        const user = await updateProfileService(userId, req.user, { name, username, email, password, bio, role, profileFile, removeProfilePicture });
 
         res.status(200).json({ success: true, user });
     } catch(error) {
