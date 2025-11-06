@@ -129,6 +129,8 @@ export const updateProfile = async (req, res, next) => {
 
         let profileFile = null;
         if (req.file) {
+            let url = `profileUploads/${req.file.filename}`;
+            req.file.url = url;
             profileFile = req.file
         }
 

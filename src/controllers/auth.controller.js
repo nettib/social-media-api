@@ -33,6 +33,8 @@ export const signUp = async (req, res, next) => {
 
         let profilePicture = null;
         if (req.file) {
+            let url = `profileUploads/${req.file.filename}`;
+            req.file.url = url;
             profilePicture = {
                 ImageName: req.file.filename,
                 originalName: req.file.originalname,

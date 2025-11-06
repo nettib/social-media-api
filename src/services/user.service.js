@@ -193,6 +193,8 @@ export const updateProfileService = async (userId, requester, { name, username, 
             }
         }
 
+        console.log(profileFile);
+        // console.log(user.profilePicture);
         await user.save();
 
         return user;

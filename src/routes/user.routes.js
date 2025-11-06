@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authenticate, authorize } from "../middlewares/auth.middleware.js";
 import { deleteUser, followUser, getAllUsers, getFollowers, getFollowing, getMyPosts, getUser, unfollowUser, updateProfile } from "../controllers/user.controller.js";
 import { checkAccountOwnership } from "../middlewares/checkAccountOwnership.middleware.js";
-import { fileUrl, upload } from "../middlewares/fileUpload.middleware.js";
+import { profileUpload } from "../middlewares/profileUpload.middleware.js";
 
 const userRouter = Router();
 
@@ -16,7 +16,7 @@ userRouter.get("/:userId/followers", authenticate, getFollowers);
 userRouter.get("/:userId/following", authenticate, getFollowing);
 
 userRouter.post("/:userId/follow", authenticate, followUser);
-userRouter.put("/:userId", authenticate, checkAccountOwnership, upload.single("profile_picture"), fileUrl, updateProfile); //update profile
+userRouter.put("/:userId", authenticate, checkAccountOwnership, profileUpload.single("profile_picture"), updateProfile); //update profile
 userRouter.delete("/:userId/follow", authenticate, unfollowUser);
 userRouter.delete("/:userId", authenticate, checkAccountOwnership, deleteUser); //delete user
 
