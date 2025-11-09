@@ -65,7 +65,7 @@ export const getCommentsService = async(postId, page, limit, sort) => {
                         .sort(sortOption);
 
         if (!comments) {
-            const error = new Error("Post not found");
+            const error = new Error("Comment not found");
             error.status = 404;
             throw error;
         }
@@ -135,11 +135,28 @@ export const likeCommentService = async (commentId, user) => {
     try {
         const comment = await Comment.findById(commentId);
 
+        if(!comment) {
+            const error = new Error("Comment not found");
+            error.status = 404;
+            throw error;
+        }
+
+        
         if (!comment.likes.includes(user.id)) {
             comment.likes.push(user.id);
             comment.likesCount += 1;
             await comment.save();
         }
+
+        return comment;
+    } catch(error) {
+        throw error;
+    }
+}
+
+export const leaveLikeService = async (commentId, user) => {
+    try {
+        const comment = await Comment.findById(commentId);
 
         if(!comment) {
             const error = new Error("Comment not found");
@@ -147,9 +164,15 @@ export const likeCommentService = async (commentId, user) => {
             throw error;
         }
 
-        return comment;
+        
+        if (comment.likes.includes(user.id)) {
+            comment.likes = comment.likes.filter(id => id.toString() !== user.id);
+            comment.likesCount = comment.likes.length;
+            await comment.save();
+        } 
+
+        return comment
     } catch(error) {
-        next(error);
+        throw error;
     }
 }
-

@@ -16,7 +16,7 @@ export const likePost = async (req, res, next) => {
         
         console.log(post.likes);
 
-        res.status(200).json({ success: true, message: "You liked this post" });
+        res.status(200).json({ success: true, post, message: "You liked this post" });
     } catch(error) {
          next(error);
     }
@@ -36,7 +36,7 @@ export const unlikePost = async (req, res, next) => {
 
         console.log(post);
 
-        res.status(200).json({ success: true, message: "You unliked the post" });
+        res.status(200).json({ success: true, post, message: "You unliked the post" });
     } catch(error) {
         next(error);
     }

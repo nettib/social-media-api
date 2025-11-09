@@ -4,8 +4,13 @@ const commentSchema = new mongoose.Schema({
     postId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Post",
-        required: true
-     },
+        default: null
+    },
+    parentComment: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Comment",
+        default: null
+    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -27,10 +32,10 @@ const commentSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-commentSchema.pre("save", function(next) {
-    this.likesCount = this.likes.length;
-    next();
-});
+// commentSchema.pre("save", function(next) {
+//     this.likesCount = this.likes.length;
+//     next();
+// });
 
 const Comment = mongoose.model("Comment", commentSchema);
 
