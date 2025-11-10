@@ -7,9 +7,18 @@ import User from "../model/user.model.js";
 import { ensureNotSelfAction } from "../utils/validation.js";
 
 
-export const getAllUsersService = async () => {
+export const getAllUsersService = async (page, limit, sort) => {
     try {
-        const users = await User.find().select('-password');
+        let sortOption;
+
+        if (sort === "latest") sortOption = { createdAt: -1 };
+        if (sort === "oldest") sortOption = { createdAt: 1 };
+
+        const users = await User.find()
+                                .select('-password')
+                                .skip((page - 1) * limit)
+                                .limit(limit)
+                                .sort(sortOption);
 
         return users;
     } catch(error) {

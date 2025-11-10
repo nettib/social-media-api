@@ -42,6 +42,7 @@ export const getCommentService = async(commentId) => {
         throw error;
     }
 }
+
 export const getCommentsService = async(postId, page, limit, sort) => {
     try {
         let sortOption = {};
@@ -57,7 +58,7 @@ export const getCommentsService = async(postId, page, limit, sort) => {
                             },
                             {
                                 path: "likes",
-                            select: "_id name username"
+                                select: "_id name username"
                             }
                         ])
                         .skip((page - 1) * limit)
