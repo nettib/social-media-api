@@ -7,6 +7,7 @@ export const errorHandler = (err, req, res, next) => {
 
         
     }  catch(error) {
+        console.log(error);
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 }

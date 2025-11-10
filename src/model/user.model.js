@@ -57,6 +57,10 @@ const UserSchema = new mongoose.Schema({
     following: { 
         type: [ { type: mongoose.Schema.Types.ObjectId, ref: "User" } ],
         default: []
+    },
+    bookmarks: {
+        type: [ { type: mongoose.Schema.Types.ObjectId, ref: "Post" } ],
+        default: []
     }
 }, { timestamps: true });
 

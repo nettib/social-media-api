@@ -4,9 +4,12 @@ import { getAllUsersService ,getMyPostsService, followUserService, getFollowersS
 
 export const getAllUsers = async (req, res, next) => {
     try {
-        const users = await getAllUsersService();
+        let { page = 1, limit = 4, sort = "latest" } = req.query;
 
-        res.status(200).json({ success: true, users });
+
+        const users = await getAllUsersService(page, limit, sort);
+
+        res.status(200).json({ success: true, data: users });
     } catch(error) {
         next(error);
     }
