@@ -1,23 +1,4 @@
 import Comment from "../model/comment.model.js";
-// import Post from "../model/post.model.js";
-
-
-// export const getCommentById = async (id) => {
-//     try {
-//         const comment = await Comment.findById(id);
-    
-//         if (!comment) {
-//             const error = new Error("The comment is not found");
-//             error.status = 404;
-//             throw error;
-//         }
-
-//         return comment;
-//     } catch(error) {
-//         throw error;
-//     }
-// }
-
 
 export const getReplyService = async(replyId) => {
     try {

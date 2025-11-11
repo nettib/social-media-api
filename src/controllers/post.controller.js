@@ -68,9 +68,8 @@ export const createPost = async (req, res, next) => {
 
 export const updatePost = async (req, res, next) => {
     try { 
-        console.log(req.files);
         const { content, removeFiles=[] } = req.body;
-        console.log(removeFiles);
+        
         if (!content && (!req.files || req.files.length == 0) && removeFiles.length == 0 ) {
             const error = new Error("No post content and files to be posted or deleted");
             error.status = 400;

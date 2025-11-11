@@ -5,7 +5,6 @@ import { getFileService } from "../services/file.service.js";
 export const downloadFile = async (req, res, next) => {
     try {
         const fileId = req.params.fileId;
-        console.log(fileId);
 
         if (!fileId) {
             const error = new Error("Bad Request");

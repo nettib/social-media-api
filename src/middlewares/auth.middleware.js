@@ -32,12 +32,11 @@ export const authenticate = async (req, res, next) => {
         next();
         
     }catch(error) {
-        console.log(error);
-        res.status(500).json({ success: false, error: "Internal server error" });
+        next(error);
     }
 }
 
-//make this like next(error)
+
 export const authorize = async (req, res, next) => {
     try {
         if (!req.user) {

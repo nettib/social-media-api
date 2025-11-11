@@ -15,13 +15,15 @@ import { fileUrl, upload } from "../middlewares/fileUpload.middleware.js";
 
 const postRouter = Router();
 
-postRouter.get("/", getAllPosts); //admin
+postRouter.use("/:postId/likes", likeRouter); 
+postRouter.use("/:postId/comments", commentRouter); 
+
+postRouter.get("/", getAllPosts); 
 postRouter.get("/:postId", getSpecificpost); 
 
 postRouter.post("/", authenticate, upload.array("files", 10), fileUrl, createPost);
 postRouter.put("/:postId", authenticate, checkPostOwnership, upload.array("files", 10), fileUrl, updatePost); 
 postRouter.delete("/:postId", authenticate, checkPostOwnership, deletePost); 
 
-postRouter.use("/:postId/like", likeRouter); 
-postRouter.use("/:postId/comment", commentRouter); 
+
 export default postRouter;

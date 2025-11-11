@@ -4,7 +4,7 @@ import { getLikes, likePost, unlikePost } from "../controllers/like.controller.j
 
 const likeRouter = Router({ mergeParams: true });
 
-// can be irrelavant to authenticate the user here
+
 likeRouter.get("/", getLikes);
 likeRouter.post("/", authenticate, likePost);
 likeRouter.delete("/", authenticate, unlikePost);

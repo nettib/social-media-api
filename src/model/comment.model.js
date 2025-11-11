@@ -32,11 +32,6 @@ const commentSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// commentSchema.pre("save", function(next) {
-//     this.likesCount = this.likes.length;
-//     next();
-// });
-
 const Comment = mongoose.model("Comment", commentSchema);
 
 export default Comment;

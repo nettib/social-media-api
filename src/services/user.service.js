@@ -35,6 +35,7 @@ export const getUserService = async (id) => {
         throw error;
     }
 }
+
 export const getMyPostsService = async (id) => {
     try {
         const posts = await Post.find({ author: id });
@@ -202,8 +203,6 @@ export const updateProfileService = async (userId, requester, { name, username, 
             }
         }
 
-        console.log(profileFile);
-        // console.log(user.profilePicture);
         await user.save();
 
         return user;

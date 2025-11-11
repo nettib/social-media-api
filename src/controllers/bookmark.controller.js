@@ -3,9 +3,9 @@ import { getBookmarksService, removeFromBookmarksService, savePostsService } fro
 
 export const getBookmarks = async (req, res, next) => {
     try {
-            const bookmarks = await getBookmarksService(req.user._id);
+        const bookmarks = await getBookmarksService(req.user._id);
 
-            res.status(200).json({ success: true, data: bookmarks });
+        res.status(200).json({ success: true, data: bookmarks });
     } catch(error) {
         console.log(error);
         next(error);

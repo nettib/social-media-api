@@ -3,7 +3,6 @@ import { downloadFile } from "../controllers/file.controller.js";
 
 const fileRouter = Router();
 
-fileRouter.get("/download/:fileId", downloadFile);
-
+fileRouter.get("/files/:fileId", downloadFile);
 
 export default fileRouter;

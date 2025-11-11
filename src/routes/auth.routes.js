@@ -7,5 +7,4 @@ const authRouter = Router();
 authRouter.post("/sign-up", profileUpload.single("profile_picture"), signUp);
 authRouter.post("/sign-in", signIn);
 
-
 export default authRouter;

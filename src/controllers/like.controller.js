@@ -4,7 +4,6 @@ import { getLikesService, likePostService, unlikePostService } from "../services
 export const likePost = async (req, res, next) => {
     try {
         const postId = req.params.postId;
-        console.log(req.params);
 
         if(!postId) {
             const error = new Error("Bad request");

@@ -51,7 +51,7 @@ export const getPostById = async (id) => {
 export const createPostService = async (author, content, files) => {
     try {
         const post = new Post({ author, content, files });
-        console.log(post);
+        
         await post.save();
 
         return post;
