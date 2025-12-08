@@ -1,4 +1,4 @@
-# Social Media API
+# Hamra
 
 A comprehensive RESTful API for a social media platform built with Node.js and Express. This API provides complete functionality for user management, posts, comments, likes, bookmarks, and file uploads.
 
